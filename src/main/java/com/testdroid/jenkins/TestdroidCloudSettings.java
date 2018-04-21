@@ -2,8 +2,8 @@ package com.testdroid.jenkins;
 
 import com.testdroid.api.APIClient;
 import com.testdroid.api.APIException;
-import com.testdroid.api.model.APINotificationEmail;
 import com.testdroid.api.model.APIUser;
+import com.testdroid.api.model.notification.APINotificationScope;
 import com.testdroid.jenkins.utils.ResultWaiter;
 import com.testdroid.jenkins.utils.TestdroidApiUtil;
 import hudson.Extension;
@@ -99,8 +99,8 @@ public class TestdroidCloudSettings extends Plugin implements Describable<Testdr
         private boolean noCheckCertificate;
 
         private String notificationEmail = "";
-
-        private String notificationEmailType = String.valueOf(APINotificationEmail.Type.ALWAYS);
+        @Deprecated
+        private String notificationEmailType = String.valueOf(APINotificationScope.TEST_RUN);
 
         private String password;
 
@@ -209,8 +209,9 @@ public class TestdroidCloudSettings extends Plugin implements Describable<Testdr
         public ListBoxModel doFillNotificationEmailTypeItems() {
             ListBoxModel emailNotificationTypes = new ListBoxModel();
 
-            emailNotificationTypes.add(Messages.ALWAYS(), APINotificationEmail.Type.ALWAYS.toString());
-            emailNotificationTypes.add(Messages.ON_FAILURE_ONLY(), APINotificationEmail.Type.ON_FAILURE.toString());
+            emailNotificationTypes.add(Messages.ALWAYS(), APINotificationScope.ALL.toString());
+            emailNotificationTypes.add(Messages.ON_FAILURE_ONLY(),APINotificationScope.TEST_RUN_FAILURE.toString());
+            emailNotificationTypes.add(Messages.ON_SUCCEED_ONLY(),APINotificationScope.TEST_RUN_SUCCEEDED.toString());
 
             return emailNotificationTypes;
         }

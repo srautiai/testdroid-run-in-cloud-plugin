@@ -13,6 +13,7 @@ import hudson.model.BuildListener;
 import hudson.remoting.Callable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.jenkinsci.remoting.RoleChecker;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -114,5 +115,9 @@ public class MachineIndependentResultsDownloader extends MachineIndependentTask
             IOUtils.closeQuietly(outputStream);
         }
         return false;
+    }
+
+    @Override public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+
     }
 }

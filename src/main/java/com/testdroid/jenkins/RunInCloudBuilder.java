@@ -5,17 +5,20 @@ import com.testdroid.api.APIException;
 import com.testdroid.api.APIQueryBuilder;
 import com.testdroid.api.model.*;
 import com.testdroid.api.model.APITestRunConfig.Scheduler;
+import com.testdroid.api.model.notification.APINotificationScope;
 import com.testdroid.jenkins.model.TestRunStateCheckMethod;
 import com.testdroid.jenkins.remotesupport.MachineIndependentFileUploader;
 import com.testdroid.jenkins.remotesupport.MachineIndependentResultsDownloader;
 import com.testdroid.jenkins.scheduler.TestRunFinishCheckScheduler;
 import com.testdroid.jenkins.scheduler.TestRunFinishCheckSchedulerFactory;
 import com.testdroid.jenkins.utils.AndroidLocale;
-import com.testdroid.jenkins.utils.EmailHelper;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.*;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
+import hudson.model.Hudson;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
@@ -65,7 +68,7 @@ public class RunInCloudBuilder extends AbstractBuilder {
 
     private String notificationEmail = "";
 
-    private String notificationEmailType = String.valueOf(APINotificationEmail.Type.ALWAYS);
+    private String notificationEmailType = APINotificationScope.ALL.toString();
 
     private String projectId;
 
@@ -366,7 +369,7 @@ public class RunInCloudBuilder extends AbstractBuilder {
                 return false;
             }
 
-            updateUserEmailNotifications(user, project);
+            //updateUserEmailNotifications(user, project);
 
             APITestRunConfig config = project.getTestRunConfig();
             config.setAppCrawlerRun(!isFullTest());
@@ -576,7 +579,7 @@ public class RunInCloudBuilder extends AbstractBuilder {
         listener.getLogger().println(String.format("%s: %s", Messages.PROJECT(), project.getName()));
         listener.getLogger().println(String.format("%s: %s", Messages.LOCALE(), config.getDeviceLanguageCode()));
         listener.getLogger().println(String.format("%s: %s", Messages.SCHEDULER(), config.getScheduler()));
-        listener.getLogger().println(String.format("%s: %s", Messages.APP_CRAWLER(), config.getAppCrawlerRun()));
+        listener.getLogger().println(String.format("%s: %s", Messages.APP_CRAWLER(), config.isAppCrawlerRun()));
         listener.getLogger().println(String.format("%s: %s", Messages.PRICE(), config.getCreditsPrice()));
         listener.getLogger().println(String.format("%s: %s", Messages.TIMEOUT(), config.getTimeout()));
     }
@@ -599,13 +602,16 @@ public class RunInCloudBuilder extends AbstractBuilder {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    private void updateUserEmailNotifications(APIUser user, APIProject project) {
+    /*private void updateUserEmailNotifications(APIUser user, APIProject project) {
         try {
+            //APINotificationPlan.
             //set emails per user
+            APINotification.
             APINotificationEmail.Type neType = APINotificationEmail.Type.valueOf(TestdroidCloudSettings.descriptor()
                     .getNotificationEmailType());
             List<String> emailAddressesToSet = EmailHelper.getEmailAddresses(TestdroidCloudSettings.descriptor()
                     .getNotificationEmail());
+            //user.getEmailNotification()
             List<APINotificationEmail> currentEmails = user.getNotificationEmails().getEntity().getData();
             //remove exceeded emails and update type of existed ones
             for (APINotificationEmail email : currentEmails) {
@@ -655,7 +661,7 @@ public class RunInCloudBuilder extends AbstractBuilder {
         }
         return false;
     }
-
+*/
     public static class WaitForResultsBlock {
 
         private boolean downloadScreenshots;
